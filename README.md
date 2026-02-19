@@ -5,7 +5,7 @@
 # 🎯 Kubernetes Hands-On Labs
 ### *From Zero to Cloud-Native Hero*
 
-[![Kubernetes](https://img.shields.io/badge/kubernetes-v1.28+-326CE5?style=flat-square&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Kubernetes](https://img.shields.io/badge/kubernetes-v1.35+-326CE5?style=flat-square&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![AWS](https://img.shields.io/badge/AWS-EKS-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/eks/)
 [![License](https://img.shields.io/badge/license-Educational-blue?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
