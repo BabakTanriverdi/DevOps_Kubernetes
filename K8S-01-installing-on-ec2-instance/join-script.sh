@@ -29,3 +29,31 @@ sudo kubeadm join \
 
 kubeadm join ${KubeMaster1.PrivateIp}:6443 --token $(mssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ${AWS::Region} ubuntu@${KubeMaster1} kubeadm token list | awk 'NR == 2 {print $1}') --discovery-token-ca-cert-hash sha256:$(mssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ${AWS::Region} ubuntu@${KubeMaster1} openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
 
+
+
+
+# #!/bin/bash
+# set -e  # Stop on error
+
+# # Run on master node
+# MASTER_IP="192.168.122.195"
+# MASTER_PORT="6443"
+
+# # Create new token (valid for 24 hours)
+# TOKEN=$(sudo kubeadm token create)
+
+# # Get CA cert hash
+# CA_HASH=$(sudo openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt \
+#   | openssl rsa -pubin -outform der 2>/dev/null \
+#   | openssl dgst -sha256 -hex \
+#   | sed 's/^.* //')
+
+# # Print join command to run on worker node
+# echo "Run this command on worker node:"
+# echo ""
+# echo "sudo kubeadm join ${MASTER_IP}:${MASTER_PORT} \\"
+# echo "  --token ${TOKEN} \\"
+# echo "  --discovery-token-ca-cert-hash sha256:${CA_HASH}"
+
+# # Or generate join command directly
+# sudo kubeadm token create --print-join-command
