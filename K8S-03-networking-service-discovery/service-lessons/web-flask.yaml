@@ -1,0 +1,22 @@
+apiVersion: apps/v1  #  kubectl api-resources
+kind: Deployment 
+metadata:
+  name: web-flask-deploy
+  labels:
+    env: dev
+  namespace: demo
+spec:
+  replicas: 3 
+  selector:  
+    matchLabels:
+      app: web-flask
+  template: 
+    metadata:
+      labels:
+        app: web-flask
+    spec:
+      containers:
+      - name: web-flask-pod
+        image: ondiacademy/cw_web_flask1
+        ports:
+        - containerPort: 5000

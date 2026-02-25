@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: forcurl
+spec:
+  containers:
+  - name: forcurl
+    image: ondiacademy/forping
+    imagePullPolicy: IfNotPresent #https://kubernetes.io/docs/concepts/containers/images/
+  restartPolicy: Always #https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
