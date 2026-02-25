@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ondia-pod
+  labels:
+    app: ondia-web 
+spec:
+  volumes:
+    - name: ondia-pv-storage
+      persistentVolumeClaim:
+        claimName: ondia-pv-claim
+  containers:
+    - name: ondia-pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: ondia-pv-storage
+      
