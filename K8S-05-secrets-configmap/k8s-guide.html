@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Secrets & ConfigMaps - Interactive Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0066FF;
+            --secondary: #00D9FF;
+            --accent: #FF6B35;
+            --dark: #0A0E27;
+            --darker: #050810;
+            --light: #F8F9FA;
+            --code-bg: #1a1d2e;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(120deg, #00D9FF 0%, #0066FF 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--darker); color: var(--light); line-height: 1.7; overflow-x: hidden; }
+
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.03;
+            background-image: radial-gradient(circle at 20% 50%, var(--primary) 0%, transparent 50%), 
+                              radial-gradient(circle at 80% 80%, var(--secondary) 0%, transparent 50%), 
+                              radial-gradient(circle at 40% 20%, var(--accent) 0%, transparent 50%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.03; } 50% { opacity: 0.08; } }
+
+        header { background: rgba(10, 14, 39, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); position: sticky; top: 0; z-index: 1000; padding: 1.5rem 2rem; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        
+        .lang-switcher { display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 0.5rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .lang-btn { padding: 0.5rem 1.5rem; background: transparent; border: none; color: var(--light); cursor: pointer; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 500; transition: all 0.3s ease; }
+        .lang-btn.active { background: var(--gradient-2); box-shadow: 0 4px 15px rgba(0, 102, 255, 0.4); }
+
+        .hero { text-align: center; padding: 6rem 2rem 4rem; max-width: 1000px; margin: 0 auto; }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900; margin-bottom: 1.5rem; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 3rem 0; }
+        .nav-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; }
+        .nav-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .nav-card-number { display: inline-block; width: 40px; height: 40px; background: var(--gradient-2); border-radius: 50%; text-align: center; line-height: 40px; font-weight: 700; margin-bottom: 1rem; }
+
+        .content-block { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2.5rem; margin: 2rem 0; scroll-margin-top: 120px; }
+        .content-block h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--secondary); }
+
+        .code-block { background: var(--code-bg); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; position: relative; }
+        pre { font-family: 'JetBrains Mono', monospace; color: #e6edf3; overflow-x: auto; }
+        .copy-btn { position: absolute; top: 1rem; right: 1rem; background: rgba(0, 102, 255, 0.2); border: 1px solid rgba(0, 102, 255, 0.3); color: var(--secondary); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; }
+
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--gradient-2); width: 0%; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">K8s Guide</div>
+            <div class="lang-switcher">
+                <button class="lang-btn active" onclick="switchLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="switchLanguage('tr')">TR</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Kubernetes Secrets & ConfigMaps</h1>
+    </section>
+
+    <div id="content-en" class="content-section active">
+        <div class="container">
+            <div class="nav-grid">
+                <div class="nav-card" onclick="document.getElementById('setup-en').scrollIntoView({behavior:'smooth'})">
+                    <div class="nav-card-number">1</div>
+                    <h3>Cluster Setup</h3>
+                </div>
+                <div class="nav-card" onclick="document.getElementById('secrets-en').scrollIntoView({behavior:'smooth'})">
+                    <div class="nav-card-number">2</div>
+                    <h3>Secrets</h3>
+                </div>
+                <div class="nav-card" onclick="document.getElementById('config-en').scrollIntoView({behavior:'smooth'})">
+                    <div class="nav-card-number">3</div>
+                    <h3>ConfigMaps</h3>
+                </div>
+            </div>
+
+            <div class="content-block" id="setup-en">
+                <h2>Part 1: Setup</h2>
+                <div class="code-block"><pre><code>kubectl cluster-info</code></pre></div>
+            </div>
+            <div class="content-block" id="secrets-en">
+                <h2>Part 2: Secrets</h2>
+                <div class="code-block"><pre><code>kubectl create secret generic my-secret</code></pre></div>
+            </div>
+            <div class="content-block" id="config-en">
+                <h2>Part 3: ConfigMaps</h2>
+                <div class="code-block"><pre><code>kubectl create configmap my-config</code></pre></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content-tr" class="content-section">
+        <div class="container">
+            <div class="nav-grid">
+                <div class="nav-card" onclick="document.getElementById('setup-tr').scrollIntoView({behavior:'smooth'})">
+                    <div class="nav-card-number">1</div>
+                    <h3>Cluster Kurulumu</h3>
+                </div>
+                <div class="nav-card" onclick="document.getElementById('secrets-tr').scrollIntoView({behavior:'smooth'})">
+                    <div class="nav-card-number">2</div>
+                    <h3>Secrets</h3>
+                </div>
+                <div class="nav-card" onclick="document.getElementById('config-tr').scrollIntoView({behavior:'smooth'})">
+                    <div class="nav-card-number">3</div>
+                    <h3>ConfigMaps</h3>
+                </div>
+            </div>
+
+            <div class="content-block" id="setup-tr">
+                <h2>Bölüm 1: Kurulum</h2>
+                <div class="code-block"><pre><code>kubectl cluster-info</code></pre></div>
+            </div>
+            <div class="content-block" id="secrets-tr">
+                <h2>Bölüm 2: Secrets</h2>
+                <div class="code-block"><pre><code>kubectl create secret generic my-secret</code></pre></div>
+            </div>
+            <div class="content-block" id="config-tr">
+                <h2>Bölüm 3: ConfigMaps</h2>
+                <div class="code-block"><pre><code>kubectl create configmap my-config</code></pre></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchLanguage(lang) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('content-' + lang).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById("progressBar").style.width = (winScroll / height) * 100 + "%";
+        };
+    </script>
+</body>
+</html>
