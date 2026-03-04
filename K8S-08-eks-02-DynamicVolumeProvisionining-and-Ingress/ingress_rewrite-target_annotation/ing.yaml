@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-clarusshop
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: storefront-service
+                port: 
+                  number: 80
+          - path: /account
+            pathType: Prefix
+            backend:
+              service:
+                name: account-service
+                port: 
+                  number: 80
